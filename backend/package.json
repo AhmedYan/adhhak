@@ -1,0 +1,22 @@
+{
+  "name": "adhhak-booking-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Adhhak dental booking system with Google Calendar integration",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "googleapis": "^128.0.0",
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  }
+}
+
