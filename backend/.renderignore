@@ -1,0 +1,12 @@
+# Fichiers à ignorer lors du déploiement Render
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
+token.json
+credentials.json
+*.md
+FILL_ENV.md
+RENDER_DEPLOY.md
+

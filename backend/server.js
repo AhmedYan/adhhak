@@ -119,7 +119,8 @@ async function testCalendarConnection() {
   }
 }
 
-app.listen(PORT, async () => {
+// Listen on all interfaces (0.0.0.0) for Render deployment
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`\n🚀 Adhhak Booking API server running on port ${PORT}`);
   console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:8080'}`);
   console.log(`\n📋 Configuration:`);
