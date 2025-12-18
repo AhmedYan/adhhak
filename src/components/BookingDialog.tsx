@@ -195,11 +195,11 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
       });
 
       if (result.success) {
-        // Show success toast
+        // Show success toast with friendly message
         toast({
-          title: "Rendez-vous réservé avec succès! ✅",
-          description: `Votre rendez-vous du ${format(selectedDate, "d MMMM yyyy", { locale: fr })} à ${selectedTime} a été ajouté directement dans le calendrier du dentiste. Vous recevrez une confirmation par email.`,
-          duration: 6000,
+          title: "🎉 Réservation confirmée !",
+          description: `Votre rendez-vous du ${format(selectedDate, "d MMMM yyyy", { locale: fr })} à ${selectedTime} a été confirmé et ajouté dans notre calendrier. Nous avons hâte de vous accueillir pour votre consultation gratuite !`,
+          duration: 8000,
         });
 
         // Open calendar event link if available

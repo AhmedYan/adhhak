@@ -5,12 +5,20 @@ import { BOOKING_CONFIG } from '../config/booking.js';
  * Create email transporter
  */
 function createTransporter() {
+  const emailPassword = process.env.EMAIL_PASSWORD || process.env.EMAIL_APP_PASSWORD;
+  
+  // Si pas de mot de passe, ne pas créer le transporter (email optionnel)
+  if (!emailPassword || emailPassword.trim() === '') {
+    console.warn('⚠️  EMAIL_PASSWORD not set - email notifications will be disabled');
+    return null;
+  }
+
   // Use Gmail SMTP or custom SMTP from environment
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE || 'gmail',
     auth: {
       user: process.env.EMAIL_USER || BOOKING_CONFIG.DENTIST_EMAIL,
-      pass: process.env.EMAIL_PASSWORD || process.env.EMAIL_APP_PASSWORD, // Use App Password for Gmail
+      pass: emailPassword,
     },
   });
 
@@ -23,6 +31,16 @@ function createTransporter() {
 export async function sendNotificationEmail({ date, time, name, email, phone, message, eventLink }) {
   try {
     const transporter = createTransporter();
+    
+    // Si pas de transporter (pas de mot de passe), on skip l'email
+    if (!transporter) {
+      console.log('ℹ️  Email notification skipped (EMAIL_PASSWORD not configured)');
+      return {
+        success: true,
+        skipped: true,
+        message: 'Email notification skipped - EMAIL_PASSWORD not configured'
+      };
+    }
     
     const eventDate = new Date(date);
     const formattedDate = eventDate.toLocaleDateString('fr-FR', { 

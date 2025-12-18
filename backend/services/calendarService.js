@@ -58,7 +58,7 @@ function initializeCalendar() {
     console.log(`   GOOGLE_CLIENT_SECRET: ${client_secret ? '✅ Found' : '❌ MISSING'}`);
     
     if (!client_id) {
-      const errorMsg = 'GOOGLE_CLIENT_ID is missing. Create backend/.env file with: GOOGLE_CLIENT_ID=42663768344-de95419h1o7me9d0igr72ktcsbh0hrds.apps.googleusercontent.com';
+      const errorMsg = 'GOOGLE_CLIENT_ID is missing. Create backend/.env file with your Client ID from Google Cloud Console.';
       console.error(`\n❌ ${errorMsg}\n`);
       throw new Error(errorMsg);
     }
