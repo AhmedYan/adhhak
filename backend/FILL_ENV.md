@@ -10,7 +10,7 @@ Le fichier `backend/.env` existe déjà mais il manque le **GOOGLE_CLIENT_SECRET
    - https://console.cloud.google.com/apis/credentials
 
 2. **Trouvez votre OAuth 2.0 Client ID:**
-   - Cherchez: `42663768344-de95419h1o7me9d0igr72ktcsbh0hrds.apps.googleusercontent.com`
+   - Cherchez votre Client ID dans la liste
 
 3. **Cliquez dessus** pour voir les détails
 

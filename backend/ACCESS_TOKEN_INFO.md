@@ -41,10 +41,11 @@ Même si vous utilisez `GOOGLE_ACCESS_TOKEN`, le système :
 
 ```env
 # Google Calendar API
-GOOGLE_CLIENT_ID=42663768344-de95419h1o7me9d0igr72ktcsbh0hrds.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=votre_secret
-GOOGLE_REFRESH_TOKEN=1//05vQZ3uSJbGFNCgYIARAAGAUSNwF-...
-GOOGLE_ACCESS_TOKEN=ya29.a0Aa7pCA-O3ItGyrHNLwYymJ8TnYr4CgOL3lTwq8E0Ub1Cc-...
+# ⚠️ IMPORTANT: Remplacez par vos vraies valeurs depuis Google Cloud Console
+GOOGLE_CLIENT_ID=votre_client_id_ici.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=votre_secret_ici
+GOOGLE_REFRESH_TOKEN=votre_refresh_token_ici
+GOOGLE_ACCESS_TOKEN=votre_access_token_ici
 GOOGLE_ACCESS_TOKEN_EXPIRES_IN=3600
 ```
 
