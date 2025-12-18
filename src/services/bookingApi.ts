@@ -2,7 +2,7 @@
  * API service for booking appointments
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://adhhak.onrender.com';
 
 export interface BookingRequest {
   date: string; // ISO date string (YYYY-MM-DD)
