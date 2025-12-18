@@ -50,9 +50,11 @@ export async function sendNotificationEmail({ date, time, name, email, phone, me
       day: 'numeric' 
     });
 
+    const dentistEmail = process.env.DENTIST_EMAIL || process.env.EMAIL_USER || BOOKING_CONFIG.DENTIST_EMAIL;
+    
     const mailOptions = {
-      from: `"${BOOKING_CONFIG.CLINIC_NAME} - Système de réservation" <${process.env.EMAIL_USER || BOOKING_CONFIG.DENTIST_EMAIL}>`,
-      to: BOOKING_CONFIG.DENTIST_EMAIL,
+      from: `"${BOOKING_CONFIG.CLINIC_NAME} - Système de réservation" <${process.env.EMAIL_USER || dentistEmail}>`,
+      to: dentistEmail,
       subject: `🔔 Nouveau rendez-vous - ${name} - ${formattedDate} à ${time}`,
       html: `
         <!DOCTYPE html>

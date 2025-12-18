@@ -19,7 +19,7 @@ async function setupOAuth() {
     
     console.log('1. Ouvrez ce lien dans votre navigateur:');
     console.log('\n' + authUrl + '\n');
-    console.log('2. Connectez-vous avec votre compte Google (adhhak9@gmail.com)');
+    console.log('2. Connectez-vous avec votre compte Google');
     console.log('3. Autorisez l\'application à accéder à votre calendrier');
     console.log('4. Copiez le code d\'autorisation affiché\n');
     

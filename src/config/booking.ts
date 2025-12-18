@@ -5,7 +5,8 @@
 
 export const BOOKING_CONFIG = {
   // Email - recevra les notifications de rendez-vous
-  DENTIST_EMAIL: "adhhak9@gmail.com",
+  // Note: L'email réel est configuré côté backend dans .env
+  DENTIST_EMAIL: "dentist@example.com", // Placeholder - réel configuré dans backend/.env
   
   // Durée des rendez-vous en heures
   APPOINTMENT_DURATION_HOURS: 1,

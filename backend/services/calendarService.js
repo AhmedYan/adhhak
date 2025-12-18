@@ -251,7 +251,7 @@ export async function createCalendarEvent({ date, time, name, email, phone, mess
           displayName: name,
         },
         {
-          email: BOOKING_CONFIG.DENTIST_EMAIL, // Dentist email
+          email: process.env.DENTIST_EMAIL || process.env.EMAIL_USER || BOOKING_CONFIG.DENTIST_EMAIL, // Dentist email
         },
       ],
       reminders: {

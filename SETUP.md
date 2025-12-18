@@ -5,7 +5,7 @@ Ce guide vous explique comment configurer le système de réservation complet av
 ## 📋 Prérequis
 
 - Node.js 18+ installé
-- Compte Google (adhhak9@gmail.com)
+- Compte Google (pour Google Calendar API)
 - Accès à Google Cloud Console
 
 ## 🔧 Installation
@@ -92,7 +92,8 @@ cd ..
 
    # Email Configuration (pour les notifications)
    EMAIL_SERVICE=gmail
-   EMAIL_USER=adhhak9@gmail.com
+   DENTIST_EMAIL=your_dentist_email@gmail.com
+   EMAIL_USER=your_email@gmail.com
    EMAIL_PASSWORD=votre_app_password_ici
    ```
 
