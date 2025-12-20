@@ -20,23 +20,42 @@ const allowedOrigins = [
   'http://localhost:5173', // Vite default port
 ].filter(Boolean); // Remove undefined values
 
+// Log allowed origins on startup
+console.log('🌐 CORS Configuration:');
+console.log(`   Allowed origins: ${allowedOrigins.length > 0 ? allowedOrigins.join(', ') : 'None configured'}`);
+
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      // Log for debugging
+    try {
+      // Allow requests with no origin (like mobile apps, curl, Postman, or server-to-server requests)
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      // Log blocked origin for debugging (but don't crash)
       console.warn(`⚠️  CORS blocked origin: ${origin}`);
-      console.log(`✅ Allowed origins: ${allowedOrigins.join(', ')}`);
-      callback(new Error('Not allowed by CORS'));
+      console.log(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+      
+      // Reject the request
+      return callback(null, false);
+    } catch (error) {
+      // Catch any errors in the origin function to prevent server crash
+      console.error('❌ CORS origin function error:', error);
+      // Allow the request to prevent blocking legitimate requests due to a bug
+      return callback(null, true);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  maxAge: 86400, // 24 hours - cache preflight requests
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11) choke on 204
 }));
 app.use(express.json());
 
