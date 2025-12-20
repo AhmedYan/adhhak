@@ -167,15 +167,150 @@ function initializeCalendar() {
   }
 }
 
-// Export initializeCalendar for use in server.js
-export { initializeCalendar };
+// Export functions for use in server.js and other modules
+export { initializeCalendar, refreshAccessToken };
 
 // Don't initialize on module load - let server.js handle it
 // This allows better error handling and logging
 
 /**
- * Refresh access token if needed
- * This ensures we always have a valid access token
+ * Check if the access token is expired or will expire soon
+ * @param {Object} credentials - OAuth2 credentials object
+ * @param {number} bufferMinutes - Minutes before expiry to consider token expired (default: 5)
+ * @returns {boolean} - True if token is expired or will expire soon
+ */
+function isTokenExpired(credentials, bufferMinutes = 5) {
+  if (!credentials || !credentials.access_token) {
+    return true; // No token = expired
+  }
+
+  // If no expiry_date, assume expired (should refresh to get expiry)
+  if (!credentials.expiry_date) {
+    console.warn('⚠️  Token has no expiry_date, will refresh to get valid expiry');
+    return true;
+  }
+
+  // Check if token expires within buffer time (default: 5 minutes)
+  const expiryTime = credentials.expiry_date;
+  const currentTime = Date.now();
+  const bufferTime = bufferMinutes * 60 * 1000; // Convert minutes to milliseconds
+
+  const isExpired = expiryTime <= (currentTime + bufferTime);
+  
+  if (isExpired) {
+    const expiredSecondsAgo = Math.floor((currentTime - expiryTime) / 1000);
+    const expiredMinutesAgo = Math.floor(expiredSecondsAgo / 60);
+    if (expiredMinutesAgo > 0) {
+      console.log(`⏰ Token expired ${expiredMinutesAgo} minute(s) ago`);
+    } else {
+      console.log(`⏰ Token expires in ${Math.floor((expiryTime - currentTime) / 1000 / 60)} minute(s)`);
+    }
+  } else {
+    const remainingMinutes = Math.floor((expiryTime - currentTime) / 1000 / 60);
+    console.log(`✅ Token valid for ${remainingMinutes} more minute(s)`);
+  }
+
+  return isExpired;
+}
+
+/**
+ * Refresh access token using Google OAuth2 API
+ * Uses refresh token from environment variables or stored credentials
+ * @returns {Promise<Object>} - Updated credentials object
+ */
+async function refreshAccessToken() {
+  if (!oauth2Client) {
+    throw new Error('OAuth2 client not initialized');
+  }
+
+  // Get refresh token from environment (priority) or stored credentials
+  const envRefreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  const currentCredentials = oauth2Client.credentials;
+  const refreshToken = envRefreshToken || currentCredentials?.refresh_token;
+
+  if (!refreshToken) {
+    throw new Error('No refresh token available. Set GOOGLE_REFRESH_TOKEN in environment variables or ensure token.json contains refresh_token.');
+  }
+
+  console.log('🔄 Refreshing access token using Google OAuth2 API...');
+  console.log(`   Using refresh token: ${refreshToken.substring(0, 20)}...`);
+
+  try {
+    // Ensure refresh token is set in OAuth2Client
+    if (!currentCredentials?.refresh_token) {
+      oauth2Client.setCredentials({
+        refresh_token: refreshToken
+      });
+    }
+
+    // Call Google OAuth2 API to refresh the access token
+    // This uses the official google-auth-library method
+    const { credentials } = await oauth2Client.refreshAccessToken();
+
+    // Preserve the refresh token (it doesn't change, but Google might not return it)
+    const preservedRefreshToken = credentials.refresh_token || refreshToken || currentCredentials?.refresh_token;
+
+    // Prepare updated credentials object
+    const updatedCredentials = {
+      access_token: credentials.access_token,
+      refresh_token: preservedRefreshToken,
+      token_type: credentials.token_type || 'Bearer',
+      scope: credentials.scope || currentCredentials?.scope || 'https://www.googleapis.com/auth/calendar.events'
+    };
+
+    // Calculate expiry_date from expires_in if not provided
+    if (credentials.expiry_date) {
+      updatedCredentials.expiry_date = credentials.expiry_date;
+    } else if (credentials.expires_in) {
+      // expires_in is in seconds, convert to milliseconds and add to current time
+      updatedCredentials.expiry_date = Date.now() + (credentials.expires_in * 1000);
+      console.log(`   Token expires in ${credentials.expires_in} seconds (${Math.floor(credentials.expires_in / 60)} minutes)`);
+    } else {
+      // Default to 1 hour if not specified (Google's default)
+      updatedCredentials.expiry_date = Date.now() + (3600 * 1000);
+      console.warn('⚠️  No expiry info from Google, defaulting to 1 hour');
+    }
+
+    // Update OAuth2Client with new credentials
+    oauth2Client.setCredentials(updatedCredentials);
+
+    // Save to file for persistence (if not in production or if file system is available)
+    try {
+      saveTokensToFile(updatedCredentials);
+    } catch (saveError) {
+      console.warn('⚠️  Could not save tokens to file (this is OK in some deployment environments)');
+    }
+
+    const expiryDate = new Date(updatedCredentials.expiry_date);
+    console.log(`✅ Access token refreshed successfully`);
+    console.log(`   New token expires at: ${expiryDate.toLocaleString()}`);
+    console.log(`   Token: ${updatedCredentials.access_token.substring(0, 30)}...`);
+
+    return updatedCredentials;
+  } catch (error) {
+    console.error('❌ Error refreshing access token:');
+    console.error(`   Message: ${error.message}`);
+    
+    if (error.response) {
+      console.error(`   Status: ${error.response.status}`);
+      console.error(`   Data:`, JSON.stringify(error.response.data, null, 2));
+      
+      if (error.response.status === 400) {
+        throw new Error('Invalid refresh token. Please verify GOOGLE_REFRESH_TOKEN in your environment variables.');
+      } else if (error.response.status === 401) {
+        throw new Error('Refresh token expired or revoked. You need to re-authenticate and get a new refresh token.');
+      }
+    }
+    
+    throw new Error(`Failed to refresh access token: ${error.message}`);
+  }
+}
+
+/**
+ * Ensure we have a valid, non-expired access token
+ * Automatically refreshes token if expired or about to expire
+ * Uses environment variables (GOOGLE_ACCESS_TOKEN, GOOGLE_REFRESH_TOKEN) with priority
+ * @returns {Promise<boolean>} - True if authenticated successfully
  */
 async function ensureAuthenticated() {
   if (!oauth2Client) {
@@ -184,81 +319,76 @@ async function ensureAuthenticated() {
     }
   }
 
-  const token = oauth2Client.credentials;
-  
-  // Priority: Check if GOOGLE_ACCESS_TOKEN is set in environment
+  const currentCredentials = oauth2Client.credentials;
   const envAccessToken = process.env.GOOGLE_ACCESS_TOKEN;
-  if (envAccessToken && envAccessToken !== token?.access_token) {
-    console.log('🔄 Updating access token from environment...');
-    const credentials = {
-      access_token: envAccessToken,
-      refresh_token: token?.refresh_token || process.env.GOOGLE_REFRESH_TOKEN,
-      token_type: 'Bearer',
-      scope: token?.scope || 'https://www.googleapis.com/auth/calendar.events'
-    };
-    
-    // Calculate expiry if provided
-    if (process.env.GOOGLE_ACCESS_TOKEN_EXPIRES_IN) {
-      const expiresIn = parseInt(process.env.GOOGLE_ACCESS_TOKEN_EXPIRES_IN, 10);
-      credentials.expiry_date = Date.now() + (expiresIn * 1000);
-    } else if (token?.expiry_date) {
-      credentials.expiry_date = token.expiry_date;
-    }
-    
-    oauth2Client.setCredentials(credentials);
-    console.log('✅ Access token updated from environment');
-    return true;
-  }
-  
-  // Check if we need to refresh the token
-  // Refresh if no access token or if it expires in less than 5 minutes
-  const needsRefresh = !token?.access_token || 
-    (token.expiry_date && token.expiry_date < Date.now() + 5 * 60 * 1000);
+  const envRefreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  const envExpiresIn = process.env.GOOGLE_ACCESS_TOKEN_EXPIRES_IN;
 
-  if (needsRefresh) {
-    try {
-      console.log('🔄 Refreshing access token...');
+  // Priority 1: Use GOOGLE_ACCESS_TOKEN from environment if available
+  if (envAccessToken) {
+    // Check if environment token is different from current token
+    if (envAccessToken !== currentCredentials?.access_token) {
+      console.log('🔄 Updating access token from environment variable...');
       
-      // Refresh access token using the refresh token
-      const { credentials } = await oauth2Client.refreshAccessToken();
-      
-      // Preserve the refresh token (it doesn't change)
-      const preservedRefreshToken = credentials.refresh_token || token?.refresh_token || process.env.GOOGLE_REFRESH_TOKEN;
-      
-      // Prepare credentials object according to Google API format
-      const updatedCredentials = {
-        access_token: credentials.access_token,
-        refresh_token: preservedRefreshToken,
-        token_type: credentials.token_type || 'Bearer',
-        scope: credentials.scope || token?.scope
-      };
-      
-      // Add expiry date if not present
-      if (credentials.expiry_date) {
-        updatedCredentials.expiry_date = credentials.expiry_date;
-      } else if (credentials.expires_in) {
-        updatedCredentials.expiry_date = Date.now() + (credentials.expires_in * 1000);
+      // Calculate expiry_date from environment variable
+      let expiryDate;
+      if (envExpiresIn) {
+        const expiresIn = parseInt(envExpiresIn, 10);
+        expiryDate = Date.now() + (expiresIn * 1000);
+        console.log(`   Token expires in ${expiresIn} seconds (${Math.floor(expiresIn / 60)} minutes)`);
+      } else if (currentCredentials?.expiry_date) {
+        expiryDate = currentCredentials.expiry_date;
+      } else {
+        // Default to 1 hour if not specified
+        expiryDate = Date.now() + (3600 * 1000);
+        console.warn('⚠️  No expiry info, defaulting to 1 hour');
       }
+
+      const credentials = {
+        access_token: envAccessToken,
+        refresh_token: envRefreshToken || currentCredentials?.refresh_token,
+        token_type: 'Bearer',
+        scope: currentCredentials?.scope || 'https://www.googleapis.com/auth/calendar.events',
+        expiry_date: expiryDate
+      };
+
+      oauth2Client.setCredentials(credentials);
+      console.log('✅ Access token updated from environment');
       
-      // Set credentials
-      oauth2Client.setCredentials(updatedCredentials);
-      console.log('✅ Access token refreshed successfully');
-      
-      // Always save tokens to file for persistence
-      saveTokensToFile(updatedCredentials);
+      // Save to file if refresh token is available
+      if (credentials.refresh_token) {
+        try {
+          saveTokensToFile(credentials);
+        } catch (saveError) {
+          // Ignore save errors in production
+        }
+      }
+
+      // Check if the environment token is expired
+      if (isTokenExpired(credentials)) {
+        console.log('⚠️  Environment token is expired, refreshing...');
+        await refreshAccessToken();
+      }
       
       return true;
-    } catch (error) {
-      console.error('❌ Error refreshing token:', error);
-      console.error(`   Error details: ${error.message}`);
-      if (error.response) {
-        console.error(`   Response status: ${error.response.status}`);
-        console.error(`   Response data:`, error.response.data);
+    } else {
+      // Same token, but check if it's expired
+      if (isTokenExpired(currentCredentials)) {
+        console.log('⚠️  Current token is expired, refreshing...');
+        await refreshAccessToken();
       }
-      throw new Error(`Failed to refresh access token: ${error.message}. Please check your refresh token and client credentials.`);
+      return true;
     }
   }
 
+  // Priority 2: Check if current token is expired and refresh if needed
+  if (isTokenExpired(currentCredentials)) {
+    console.log('🔄 Token expired or about to expire, refreshing...');
+    await refreshAccessToken();
+    return true;
+  }
+
+  // Token is valid
   return true;
 }
 
