@@ -201,13 +201,16 @@ function isTokenExpired(credentials, bufferMinutes = 5) {
     const expiredSecondsAgo = Math.floor((currentTime - expiryTime) / 1000);
     const expiredMinutesAgo = Math.floor(expiredSecondsAgo / 60);
     if (expiredMinutesAgo > 0) {
-      console.log(`⏰ Token expired ${expiredMinutesAgo} minute(s) ago`);
+      console.log(`⏰ Token expired ${expiredMinutesAgo} minute(s) ago (expiry: ${new Date(expiryTime).toLocaleString()})`);
     } else {
-      console.log(`⏰ Token expires in ${Math.floor((expiryTime - currentTime) / 1000 / 60)} minute(s)`);
+      const remainingSeconds = Math.floor((expiryTime - currentTime) / 1000);
+      console.log(`⏰ Token expires in ${remainingSeconds} seconds (${Math.floor(remainingSeconds / 60)} minute(s))`);
     }
   } else {
-    const remainingMinutes = Math.floor((expiryTime - currentTime) / 1000 / 60);
-    console.log(`✅ Token valid for ${remainingMinutes} more minute(s)`);
+    const remainingSeconds = Math.floor((expiryTime - currentTime) / 1000);
+    const remainingMinutes = Math.floor(remainingSeconds / 60);
+    console.log(`✅ Token valid for ${remainingMinutes} more minute(s) (${remainingSeconds} seconds)`);
+    console.log(`   Expiry: ${new Date(expiryTime).toLocaleString()}`);
   }
 
   return isExpired;
@@ -247,6 +250,17 @@ async function refreshAccessToken() {
     // This uses the official google-auth-library method
     const { credentials } = await oauth2Client.refreshAccessToken();
 
+    // Log the raw response for debugging
+    console.log('📥 Google refresh response:', {
+      has_access_token: !!credentials.access_token,
+      has_expires_in: !!credentials.expires_in,
+      has_expiry_date: !!credentials.expiry_date,
+      expires_in: credentials.expires_in,
+      expiry_date: credentials.expiry_date,
+      token_type: credentials.token_type,
+      scope: credentials.scope
+    });
+
     // Preserve the refresh token (it doesn't change, but Google might not return it)
     const preservedRefreshToken = credentials.refresh_token || refreshToken || currentCredentials?.refresh_token;
 
@@ -258,18 +272,35 @@ async function refreshAccessToken() {
       scope: credentials.scope || currentCredentials?.scope || 'https://www.googleapis.com/auth/calendar.events'
     };
 
-    // Calculate expiry_date from expires_in if not provided
-    if (credentials.expiry_date) {
-      updatedCredentials.expiry_date = credentials.expiry_date;
-    } else if (credentials.expires_in) {
-      // expires_in is in seconds, convert to milliseconds and add to current time
-      updatedCredentials.expiry_date = Date.now() + (credentials.expires_in * 1000);
-      console.log(`   Token expires in ${credentials.expires_in} seconds (${Math.floor(credentials.expires_in / 60)} minutes)`);
+    // Calculate expiry_date from expires_in (PRIORITY: expires_in from Google response)
+    // Google typically returns expires_in: 3599 (seconds) = ~1 hour
+    const DEFAULT_EXPIRES_IN = 3599; // Default: 3599 seconds (Google's standard)
+    
+    let expiresInSeconds;
+    if (credentials.expires_in) {
+      // Use expires_in from Google response (in seconds)
+      expiresInSeconds = parseInt(credentials.expires_in, 10);
+      console.log(`   ✅ Using expires_in from Google response: ${expiresInSeconds} seconds`);
+    } else if (credentials.expiry_date) {
+      // If expiry_date is provided, calculate expires_in from it
+      const expiryDate = new Date(credentials.expiry_date);
+      const now = Date.now();
+      expiresInSeconds = Math.floor((expiryDate.getTime() - now) / 1000);
+      console.log(`   ✅ Calculated expires_in from expiry_date: ${expiresInSeconds} seconds`);
     } else {
-      // Default to 1 hour if not specified (Google's default)
-      updatedCredentials.expiry_date = Date.now() + (3600 * 1000);
-      console.warn('⚠️  No expiry info from Google, defaulting to 1 hour');
+      // Default fallback: 3599 seconds (Google's standard)
+      expiresInSeconds = DEFAULT_EXPIRES_IN;
+      console.warn(`   ⚠️  No expires_in or expiry_date from Google, using default: ${expiresInSeconds} seconds (${Math.floor(expiresInSeconds / 60)} minutes)`);
     }
+
+    // Calculate expiry_date: current time + expires_in (in milliseconds)
+    updatedCredentials.expiry_date = Date.now() + (expiresInSeconds * 1000);
+    updatedCredentials.expires_in = expiresInSeconds; // Store for reference
+    
+    const expiryDate = new Date(updatedCredentials.expiry_date);
+    const remainingMinutes = Math.floor(expiresInSeconds / 60);
+    console.log(`   📅 Token will expire in ${remainingMinutes} minutes (${expiresInSeconds} seconds)`);
+    console.log(`   ⏰ Expiry date: ${expiryDate.toLocaleString()}`);
 
     // Update OAuth2Client with new credentials
     oauth2Client.setCredentials(updatedCredentials);
@@ -281,10 +312,10 @@ async function refreshAccessToken() {
       console.warn('⚠️  Could not save tokens to file (this is OK in some deployment environments)');
     }
 
-    const expiryDate = new Date(updatedCredentials.expiry_date);
     console.log(`✅ Access token refreshed successfully`);
-    console.log(`   New token expires at: ${expiryDate.toLocaleString()}`);
     console.log(`   Token: ${updatedCredentials.access_token.substring(0, 30)}...`);
+    console.log(`   Expires in: ${updatedCredentials.expires_in} seconds (${Math.floor(updatedCredentials.expires_in / 60)} minutes)`);
+    console.log(`   Expiry date: ${new Date(updatedCredentials.expiry_date).toLocaleString()}`);
 
     return updatedCredentials;
   } catch (error) {
@@ -397,7 +428,24 @@ async function ensureAuthenticated() {
  */
 export async function createCalendarEvent({ date, time, name, email, phone, message }) {
   try {
+    // Ensure we have a valid, non-expired token before creating the event
+    // This will automatically refresh if needed
+    console.log('🔐 Ensuring authentication before creating calendar event...');
     await ensureAuthenticated();
+    
+    // Double-check token is still valid (in case refresh failed silently)
+    const currentCredentials = oauth2Client.credentials;
+    if (!currentCredentials?.access_token) {
+      throw new Error('No access token available after authentication. Please check your credentials.');
+    }
+    
+    // Verify token is not expired
+    if (isTokenExpired(currentCredentials, 1)) {
+      console.warn('⚠️  Token appears expired even after ensureAuthenticated, attempting refresh...');
+      await refreshAccessToken();
+    }
+    
+    console.log('✅ Authentication verified, proceeding with event creation');
 
     // Parse date and time
     const [hours, minutes] = time.split(':').map(Number);
