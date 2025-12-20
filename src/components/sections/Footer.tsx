@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Facebook, Instagram, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 const Footer = () => {
   const quickLinks = [
