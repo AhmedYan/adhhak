@@ -123,11 +123,35 @@ const Footer = () => {
               </p>
 
               <div className="flex space-x-4">
-                <Button variant="ghost" size="icon" className="text-background hover:text-background hover:bg-white/10">
-                  <Facebook className="w-5 h-5" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-background hover:text-background hover:bg-white/10"
+                  asChild
+                >
+                  <a 
+                    href="https://www.facebook.com/profile.php?id=100083332893262&mibextid=wwXIfr&rdid=dt4cheUYniBUUfAF&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1MTGJy2AKQ%2F%3Fmibextid%3DwwXIfr" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Facebook Adhhak"
+                  >
+                    <Facebook className="w-5 h-5" />
+                  </a>
                 </Button>
-                <Button variant="ghost" size="icon" className="text-background hover:text-background hover:bg-white/10">
-                  <Instagram className="w-5 h-5" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-background hover:text-background hover:bg-white/10"
+                  asChild
+                >
+                  <a 
+                    href="https://www.instagram.com/adh_hak/?igsh=MXc3NHQwOTliaTBnYQ%3D%3D&utm_source=qr&fbclid=IwY2xjawOz7lFleHRuA2FlbQIxMABicmlkETFzeDg5MGJTemJ0djZtS1lBc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHvtuPt0OmD2tc3pAgE5UZKig6NA9ecjpVZz_HhWyTQ2Aucniphw2uZNMdjN3_aem_XN0VDc2QeIKD33MdJhCM4g" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Instagram Adhhak"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
                 </Button>
                 <Button variant="ghost" size="icon" className="text-background hover:text-background hover:bg-white/10">
                   <Twitter className="w-5 h-5" />
@@ -171,7 +195,9 @@ const Footer = () => {
                 <div className="flex items-start space-x-3">
                   <Phone className="w-5 h-5 text-background/60 mt-0.5" />
                   <div>
-                    <p className="text-background">************</p>
+                    <a href="tel:+21692505456" className="text-background hover:text-background/80 transition-colors">
+                      92505456
+                    </a>
                     <p className="text-sm text-background/60">Lun-Ven 9h-18h</p>
                   </div>
                 </div>

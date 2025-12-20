@@ -285,7 +285,7 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-2xl font-serif">
             Réserver votre consultation gratuite
@@ -327,13 +327,15 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
                 <CalendarIcon className="w-5 h-5" />
                 <span className="text-sm">Sélectionnez une date</span>
               </div>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={handleDateSelect}
-                disabled={isDateDisabled}
-                className="rounded-md border"
-              />
+              <div className="flex justify-center">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={handleDateSelect}
+                  disabled={isDateDisabled}
+                  className="rounded-md border w-full max-w-fit"
+                />
+              </div>
               {selectedDate && (
                 <div className="text-center p-3 bg-primary/10 rounded-lg">
                   <p className="text-sm text-muted-foreground">Date sélectionnée:</p>
@@ -368,14 +370,14 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
                   {format(selectedDate, "EEEE d MMMM yyyy", { locale: fr })}
                 </p>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[300px] overflow-y-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-[300px] overflow-y-auto">
                 {TIME_SLOTS.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleTimeSelect(time)}
-                    className="h-10"
+                    className="h-10 text-xs sm:text-sm"
                   >
                     {time}
                   </Button>

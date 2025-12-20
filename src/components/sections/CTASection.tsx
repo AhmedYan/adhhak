@@ -41,10 +41,13 @@ const CTASection = () => {
                     variant="outline" 
                     size="lg"
                     className="text-xs sm:text-sm md:text-base h-9 sm:h-10 md:h-11 px-3 sm:px-6 md:px-8 py-2"
+                    asChild
                   >
-                    <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                    <span className="hidden sm:inline">Appeler maintenant</span>
-                    <span className="sm:hidden">Appeler</span>
+                    <a href="tel:+21692505456">
+                      <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                      <span className="hidden sm:inline">Appeler maintenant</span>
+                      <span className="sm:hidden">Appeler</span>
+                    </a>
                   </Button>
                 </div>
 
@@ -79,7 +82,9 @@ const CTASection = () => {
                   <Phone className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">Téléphone</h3>
-                <p className="text-muted-foreground">************</p>
+                <a href="tel:+21692505456" className="text-muted-foreground hover:text-primary transition-colors">
+                  92505456
+                </a>
                 <p className="text-sm text-muted-foreground">Lun-Ven 9h-18h</p>
               </CardContent>
             </Card>

@@ -68,9 +68,11 @@ const Navigation = () => {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Phone className="w-4 h-4 mr-2" />
-              ************
+            <Button variant="outline" size="sm" asChild>
+              <a href="tel:+21692505456">
+                <Phone className="w-4 h-4 mr-2" />
+                92505456
+              </a>
             </Button>
             <Button 
               variant="hero" 
@@ -108,9 +110,11 @@ const Navigation = () => {
                 </a>
               ))}
               <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-                <Button variant="outline" size="sm">
-                  <Phone className="w-4 h-4 mr-2" />
-                  ************
+                <Button variant="outline" size="sm" asChild>
+                  <a href="tel:+21692505456">
+                    <Phone className="w-4 h-4 mr-2" />
+                    92505456
+                  </a>
                 </Button>
                 <Button 
                   variant="hero" 
