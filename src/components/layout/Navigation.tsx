@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, Calendar } from "lucide-react";
 import { BookingDialog } from "@/components/BookingDialog";
+import { Logo } from "@/components/Logo";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,11 +46,8 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-dental-blue rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">A</span>
-            </div>
-            <span className="text-2xl font-serif font-bold gradient-text">Adhhak</span>
+          <div className="flex items-center">
+            <Logo className="w-24 h-8 sm:w-32 sm:h-10 md:w-40 md:h-12" />
           </div>
 
           {/* Desktop Navigation */}
