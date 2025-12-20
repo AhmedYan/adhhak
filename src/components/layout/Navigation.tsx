@@ -44,14 +44,24 @@ const Navigation = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Logo className="w-24 h-8 sm:w-32 sm:h-10 md:w-40 md:h-12" />
+        <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-visible">
+          {/* Mobile Menu Button - Left */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
+
+          {/* Logo - Centered on mobile, left on desktop */}
+          <div className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 lg:relative lg:left-0 lg:transform-none lg:flex-shrink-0">
+            <Logo className="h-[3rem] w-auto sm:h-20 md:h-[4rem] lg:h-[28rem] xl:h-[28rem]" />
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-8 flex-shrink-0">
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -65,7 +75,7 @@ const Navigation = () => {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
             <Button variant="outline" size="sm" asChild>
               <a href="tel:+21692505456">
                 <Phone className="w-4 h-4 mr-2" />
@@ -82,15 +92,8 @@ const Navigation = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+          {/* Placeholder for mobile - keeps logo centered */}
+          <div className="lg:hidden w-10"></div>
         </div>
 
         {/* Mobile Navigation */}
