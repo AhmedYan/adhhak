@@ -184,6 +184,14 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
       // Format date as YYYY-MM-DD
       const dateString = format(selectedDate, "yyyy-MM-dd");
 
+      console.log('📝 Submitting booking form:', {
+        date: dateString,
+        time: selectedTime,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+      });
+
       // Call backend API to create booking
       const result = await createBooking({
         date: dateString,
@@ -193,6 +201,8 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
         phone: formData.phone,
         message: formData.message || undefined,
       });
+
+      console.log('📥 Booking result:', result);
 
       if (result.success) {
         // Show success toast with friendly message
