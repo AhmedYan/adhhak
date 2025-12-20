@@ -5,7 +5,7 @@
 
 export const BOOKING_CONFIG = {
   // Email - recevra les notifications de rendez-vous (depuis .env)
-  DENTIST_EMAIL: process.env.DENTIST_EMAIL || process.env.EMAIL_USER || "",
+  DENTIST_EMAIL: process.env.DENTIST_EMAIL || process.env.EMAIL_USER || "adhhak9@gmail.com",
   
   // Durée des rendez-vous en heures
   APPOINTMENT_DURATION_HOURS: parseInt(process.env.APPOINTMENT_DURATION_HOURS || "1", 10),
