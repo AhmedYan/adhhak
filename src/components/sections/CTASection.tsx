@@ -95,7 +95,7 @@ const CTASection = () => {
                   <Mail className="w-6 h-6 text-dental-mint" />
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">Email</h3>
-                <p className="text-muted-foreground">contact@adhhak.fr</p>
+                <p className="text-muted-foreground">adhhak9@gmail.com</p>
                 <p className="text-sm text-muted-foreground">Réponse sous 24h</p>
               </CardContent>
             </Card>
@@ -106,7 +106,7 @@ const CTASection = () => {
                   <MapPin className="w-6 h-6 text-accent-foreground" />
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">Adresse</h3>
-                <p className="text-muted-foreground">Ariana, Cité ghazela</p>
+                <p className="text-muted-foreground">Ariana, 51 Avenue Abou Kacem Chebi, Tunisie</p>
                 <p className="text-sm text-muted-foreground">Sur rendez-vous</p>
               </CardContent>
             </Card>

@@ -18,7 +18,7 @@ export const BOOKING_CONFIG = {
   TIME_SLOT_INTERVAL: 30,
   
   // Adresse du cabinet
-  LOCATION: "Ariana, Cité ghazela, Tunisie",
+  LOCATION: "Ariana, 51 Avenue Abou Kacem Chebi, Tunisie",
   
   // Nom du cabinet
   CLINIC_NAME: "Adhhak",

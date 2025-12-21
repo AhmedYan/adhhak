@@ -222,7 +222,7 @@ const Footer = () => {
                 <div className="flex items-start space-x-3">
                   <Mail className="w-5 h-5 text-background/60 mt-0.5" />
                   <div>
-                    <p className="text-background">contact@adhhak.fr</p>
+                    <p className="text-background">adhhak9@gmail.com</p>
                     <p className="text-sm text-background/60">Réponse sous 24h</p>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ const Footer = () => {
                 <div className="flex items-start space-x-3">
                   <MapPin className="w-5 h-5 text-background/60 mt-0.5" />
                   <div>
-                    <p className="text-background">Ariana, Cité ghazela</p>
+                    <p className="text-background">Ariana, 51 Avenue Abou Kacem Chebi, Tunisie</p>
                     <p className="text-sm text-background/60">Sur rendez-vous</p>
                   </div>
                 </div>

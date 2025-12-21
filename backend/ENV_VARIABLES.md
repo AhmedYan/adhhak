@@ -27,7 +27,7 @@ GOOGLE_ACCESS_TOKEN_EXPIRES_IN=3600
 ```env
 DENTIST_EMAIL=votre_dentist_email@gmail.com
 CLINIC_NAME=Adhhak
-CLINIC_LOCATION=Ariana, Cité ghazela, Tunisie
+CLINIC_LOCATION=Ariana, 51 Avenue Abou Kacem Chebi, Tunisie
 ```
 
 ## 📅 Configuration Réservations
