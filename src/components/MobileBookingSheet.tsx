@@ -201,28 +201,28 @@ export function MobileBookingSheet({ open, onOpenChange }: MobileBookingSheetPro
           </SheetDescription>
         </SheetHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
           {/* Step Indicator */}
-          <div className="flex items-center justify-center space-x-2 mb-6">
+          <div className="flex items-center justify-center space-x-1 sm:space-x-2 mb-4 sm:mb-6">
             <div className={`flex items-center ${step === "date" ? "text-primary" : step === "time" || step === "details" ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === "date" ? "bg-primary text-primary-foreground" : "bg-primary/20"}`}>
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${step === "date" ? "bg-primary text-primary-foreground" : "bg-primary/20"}`}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium hidden sm:inline">Date</span>
+              <span className="ml-1 sm:ml-2 text-xs sm:text-sm font-medium hidden sm:inline">Date</span>
             </div>
-            <div className="w-8 h-0.5 bg-border"></div>
+            <div className="w-6 sm:w-8 h-0.5 bg-border"></div>
             <div className={`flex items-center ${step === "time" || step === "details" ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === "time" ? "bg-primary text-primary-foreground" : step === "details" ? "bg-primary/20" : "bg-muted"}`}>
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${step === "time" ? "bg-primary text-primary-foreground" : step === "details" ? "bg-primary/20" : "bg-muted"}`}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium hidden sm:inline">Horaire</span>
+              <span className="ml-1 sm:ml-2 text-xs sm:text-sm font-medium hidden sm:inline">Horaire</span>
             </div>
-            <div className="w-8 h-0.5 bg-border"></div>
+            <div className="w-6 sm:w-8 h-0.5 bg-border"></div>
             <div className={`flex items-center ${step === "details" ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === "details" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${step === "details" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
                 3
               </div>
-              <span className="ml-2 text-sm font-medium hidden sm:inline">Infos</span>
+              <span className="ml-1 sm:ml-2 text-xs sm:text-sm font-medium hidden sm:inline">Infos</span>
             </div>
           </div>
 

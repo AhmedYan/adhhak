@@ -9,26 +9,23 @@ import bf3Image from "@/assets/bf3.png";
 const GallerySection = () => {
   const [currentImage, setCurrentImage] = useState(0);
 
-  // Gallery data with new images
+  // Gallery data with new images - each image shows once (before/after combined)
   const galleryImages = [
     {
       id: 1,
-      before: ba1Image,
-      after: ba1Image,
+      image: ba1Image,
       title: "Transformation complète",
       description: "Sourire éclatant retrouvé"
     },
     {
       id: 2,
-      before: ba2Image,
-      after: ba2Image,
+      image: ba2Image,
       title: "Correction d'espacement",
       description: "Alignement parfait"
     },
     {
       id: 3,
-      before: bf3Image,
-      after: bf3Image,
+      image: bf3Image,
       title: "Blanchiment instantané",
       description: "Éclat naturel retrouvé"
     }
@@ -60,36 +57,23 @@ const GallerySection = () => {
           <div className="relative mb-12">
             <Card className="overflow-hidden border-0 shadow-2xl animate-scale-in">
               <CardContent className="p-0">
-                <div className="grid md:grid-cols-2">
-                  {/* Before */}
-                  <div className="relative group">
-                    <img
-                      src={galleryImages[currentImage].before}
-                      alt="Avant transformation"
-                      className="w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] object-contain bg-gray-50"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end p-4 sm:p-6">
-                      <div className="text-white">
-                        <span className="bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                          Avant
-                        </span>
-                      </div>
+                {/* Single image display - before/after combined */}
+                <div className="relative group">
+                  <img
+                    src={galleryImages[currentImage].image}
+                    alt={`${galleryImages[currentImage].title} - Avant et Après`}
+                    className="w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] object-contain bg-gray-50"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent flex items-end justify-between p-4 sm:p-6">
+                    <div className="text-white">
+                      <span className="bg-red-500 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium">
+                        Avant
+                      </span>
                     </div>
-                  </div>
-
-                  {/* After */}
-                  <div className="relative group">
-                    <img
-                      src={galleryImages[currentImage].after}
-                      alt="Après transformation"
-                      className="w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] object-contain bg-gray-50"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end p-4 sm:p-6">
-                      <div className="text-white">
-                        <span className="bg-success text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                          Après
-                        </span>
-                      </div>
+                    <div className="text-white">
+                      <span className="bg-success text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium">
+                        Après
+                      </span>
                     </div>
                   </div>
                 </div>

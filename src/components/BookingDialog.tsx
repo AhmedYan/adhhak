@@ -302,50 +302,50 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-3 sm:p-4 lg:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-serif">
+          <DialogTitle className="text-xl sm:text-2xl font-serif">
             Réserver votre consultation gratuite
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs sm:text-sm">
             Choisissez une date et un horaire qui vous convient
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
           {/* Step Indicator */}
-          <div className="flex items-center justify-center space-x-2 mb-6">
+          <div className="flex items-center justify-center space-x-1 sm:space-x-2 mb-4 sm:mb-6">
             <div className={`flex items-center ${step === "date" ? "text-primary" : step === "time" || step === "details" ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === "date" ? "bg-primary text-primary-foreground" : "bg-primary/20"}`}>
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${step === "date" ? "bg-primary text-primary-foreground" : "bg-primary/20"}`}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium">Date</span>
+              <span className="ml-1 sm:ml-2 text-xs sm:text-sm font-medium hidden sm:inline">Date</span>
             </div>
-            <div className="w-12 h-0.5 bg-border"></div>
+            <div className="w-6 sm:w-12 h-0.5 bg-border"></div>
             <div className={`flex items-center ${step === "time" || step === "details" ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === "time" ? "bg-primary text-primary-foreground" : step === "details" ? "bg-primary/20" : "bg-muted"}`}>
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${step === "time" ? "bg-primary text-primary-foreground" : step === "details" ? "bg-primary/20" : "bg-muted"}`}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium">Horaire</span>
+              <span className="ml-1 sm:ml-2 text-xs sm:text-sm font-medium hidden sm:inline">Horaire</span>
             </div>
-            <div className="w-12 h-0.5 bg-border"></div>
+            <div className="w-6 sm:w-12 h-0.5 bg-border"></div>
             <div className={`flex items-center ${step === "details" ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === "details" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${step === "details" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
                 3
               </div>
-              <span className="ml-2 text-sm font-medium">Informations</span>
+              <span className="ml-1 sm:ml-2 text-xs sm:text-sm font-medium hidden sm:inline">Infos</span>
             </div>
           </div>
 
           {/* Step 1: Date Selection */}
           {step === "date" && (
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 text-muted-foreground mb-4">
-                <CalendarIcon className="w-5 h-5" />
-                <span className="text-sm">Sélectionnez une date</span>
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center space-x-2 text-muted-foreground mb-3 sm:mb-4">
+                <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm">Sélectionnez une date</span>
               </div>
               
-              {/* Mobile Calendar - Not needed in desktop Dialog, already handled in Sheet */}
+              {/* Mobile Calendar */}
               <div className="lg:hidden">
                 <div className="flex justify-center w-full overflow-x-auto pb-2">
                   <MobileDatePicker
@@ -353,7 +353,7 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
                     selected={selectedDate}
                     onSelect={handleDateSelect}
                     disabled={isDateDisabled}
-                    className="rounded-lg border bg-card shadow-sm min-w-[320px]"
+                    className="rounded-lg border bg-card shadow-sm min-w-[280px] max-w-full"
                   />
                 </div>
               </div>

@@ -60,9 +60,7 @@ const AboutSection = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button variant="hero" size="lg" asChild>
-                  <a href="#products">Découvrir nos solutions</a>
-                </Button>
+              
                 <Button variant="outline" size="lg" asChild>
                   <a href="#gallery">Voir la galerie</a>
                 </Button>
