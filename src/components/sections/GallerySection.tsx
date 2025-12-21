@@ -2,31 +2,33 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
-import beforeAfterImage from "@/assets/before-after.jpg";
+import ba1Image from "@/assets/ba-1.png";
+import ba2Image from "@/assets/ba2.png";
+import bf3Image from "@/assets/bf3.png";
 
 const GallerySection = () => {
   const [currentImage, setCurrentImage] = useState(0);
 
-  // Mock gallery data
+  // Gallery data with new images
   const galleryImages = [
     {
       id: 1,
-      before: beforeAfterImage,
-      after: beforeAfterImage,
+      before: ba1Image,
+      after: ba1Image,
       title: "Transformation complète",
       description: "Sourire éclatant retrouvé"
     },
     {
       id: 2,
-      before: beforeAfterImage,
-      after: beforeAfterImage,
+      before: ba2Image,
+      after: ba2Image,
       title: "Correction d'espacement",
       description: "Alignement parfait"
     },
     {
       id: 3,
-      before: beforeAfterImage,
-      after: beforeAfterImage,
+      before: bf3Image,
+      after: bf3Image,
       title: "Blanchiment instantané",
       description: "Éclat naturel retrouvé"
     }
@@ -64,11 +66,11 @@ const GallerySection = () => {
                     <img
                       src={galleryImages[currentImage].before}
                       alt="Avant transformation"
-                      className="w-full h-80 lg:h-96 object-cover"
+                      className="w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] object-contain bg-gray-50"
                     />
-                    <div className="absolute inset-0 bg-black/20 flex items-end p-6">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end p-4 sm:p-6">
                       <div className="text-white">
-                        <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <span className="bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-medium">
                           Avant
                         </span>
                       </div>
@@ -80,11 +82,11 @@ const GallerySection = () => {
                     <img
                       src={galleryImages[currentImage].after}
                       alt="Après transformation"
-                      className="w-full h-80 lg:h-96 object-cover"
+                      className="w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] object-contain bg-gray-50"
                     />
-                    <div className="absolute inset-0 bg-black/20 flex items-end p-6">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end p-4 sm:p-6">
                       <div className="text-white">
-                        <span className="bg-success text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <span className="bg-success text-white px-3 py-1.5 rounded-full text-sm font-medium">
                           Après
                         </span>
                       </div>

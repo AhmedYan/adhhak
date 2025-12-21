@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import story3Image from "@/assets/Adhhak Stories (3).png";
+import story4Image from "@/assets/Adhhak Stories (4).png";
 
 const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -10,39 +11,13 @@ const TestimonialsSection = () => {
   const testimonials = [
     {
       id: 1,
-      name: "Marie Dubois",
-      age: "32 ans",
-      avatar: "MD",
-      rating: 5,
-      text: "Incroyable ! Je n'arrive pas à croire à quel point le résultat est naturel. Mes collègues n'ont même pas remarqué que je portais des facettes. Je recommande Adhhak à 100%.",
-      treatment: "Facette Professionnelle"
+      image: story3Image,
+      alt: "Témoignage client Adhhak - Story Instagram 3"
     },
     {
       id: 2,
-      name: "Thomas Martin",
-      age: "28 ans",
-      avatar: "TM",
-      rating: 5,
-      text: "Service impeccable, résultat au-delà de mes attentes. Les facettes sont si confortables que j'oublie que je les porte. Parfait pour mon mariage !",
-      treatment: "Facette Classique"
-    },
-    {
-      id: 3,
-      name: "Sophie Lefebvre",
-      age: "45 ans",
-      avatar: "SL",
-      rating: 5,
-      text: "Après des années de complexes, j'ai enfin retrouvé confiance en moi. L'équipe Adhhak est professionnelle et rassurante. Un grand merci !",
-      treatment: "Facette Professionnelle"
-    },
-    {
-      id: 4,
-      name: "Pierre Rousseau",
-      age: "35 ans",
-      avatar: "PR",
-      rating: 5,
-      text: "Solution parfaite pour masquer mes dents jaunies par le café. Discret, confortable et le rendu est bluffant de réalisme.",
-      treatment: "Facette Classique"
+      image: story4Image,
+      alt: "Témoignage client Adhhak - Story Instagram 4"
     }
   ];
 
@@ -61,17 +36,6 @@ const TestimonialsSection = () => {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`w-5 h-5 ${
-          i < rating ? "text-yellow-400 fill-current" : "text-gray-300"
-        }`}
-      />
-    ));
-  };
-
   return (
     <section id="testimonials" className="py-20 lg:py-32 bg-white">
       <div className="container mx-auto px-4">
@@ -88,36 +52,14 @@ const TestimonialsSection = () => {
 
           {/* Main Testimonial */}
           <div className="relative mb-12">
-            <Card className="max-w-4xl mx-auto border-0 shadow-2xl overflow-hidden animate-scale-in">
-              <CardContent className="p-8 lg:p-12 text-center">
-                <Quote className="w-16 h-16 text-primary/20 mx-auto mb-6" />
-                
-                <blockquote className="text-xl lg:text-2xl text-foreground mb-8 font-medium leading-relaxed">
-                  "{testimonials[currentTestimonial].text}"
-                </blockquote>
-
-                <div className="flex justify-center mb-6">
-                  {renderStars(testimonials[currentTestimonial].rating)}
-                </div>
-
-                <div className="flex items-center justify-center space-x-4">
-                  <Avatar className="w-16 h-16">
-                    <AvatarImage src="" />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
-                      {testimonials[currentTestimonial].avatar}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <div className="font-semibold text-foreground text-lg">
-                      {testimonials[currentTestimonial].name}
-                    </div>
-                    <div className="text-muted-foreground">
-                      {testimonials[currentTestimonial].age}
-                    </div>
-                    <div className="text-sm text-primary font-medium">
-                      {testimonials[currentTestimonial].treatment}
-                    </div>
-                  </div>
+            <Card className="max-w-2xl mx-auto border-0 shadow-2xl overflow-hidden animate-scale-in">
+              <CardContent className="p-0">
+                <div className="relative">
+                  <img
+                    src={testimonials[currentTestimonial].image}
+                    alt={testimonials[currentTestimonial].alt}
+                    className="w-full h-auto object-contain rounded-lg"
+                  />
                 </div>
               </CardContent>
             </Card>

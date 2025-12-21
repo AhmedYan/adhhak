@@ -42,55 +42,10 @@ const HowItWorksSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl lg:text-6xl font-serif font-bold text-foreground mb-6">
-              Comment ça <span className="gradient-text">fonctionne</span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Un processus simple et rapide pour transformer votre sourire en quelques étapes
-            </p>
-          </div>
+
 
           {/* Steps */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {steps.map((step, index) => (
-              <div key={index} className="relative">
-                <Card 
-                  className="border-0 shadow-lg hover-lift animate-slide-up bg-white/80 backdrop-blur-sm"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <CardContent className="p-6 text-center">
-                    {/* Step Number */}
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
-                        {step.number}
-                      </div>
-                    </div>
 
-                    {/* Icon */}
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 mt-4 ${step.color}`}>
-                      <step.icon className="w-8 h-8" />
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="text-xl font-serif font-semibold text-foreground mb-3">
-                      {step.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {step.description}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                {/* Arrow between steps */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 -translate-y-1/2 z-10">
-                    <ArrowRight className="w-6 h-6 text-primary/30" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
 
           {/* Timeline for mobile */}
           <div className="lg:hidden mb-16">

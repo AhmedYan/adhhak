@@ -1,19 +1,129 @@
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Facebook, Instagram, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Facebook, Instagram, Mail, Phone, MapPin, Heart, Send } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
+  
+  // Contact form state
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.message) {
+      toast({
+        title: "Champs requis manquants",
+        description: "Veuillez remplir tous les champs obligatoires.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Email invalide",
+        description: "Veuillez entrer une adresse email valide.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`Message de contact - ${formData.firstName} ${formData.lastName}`);
+    const body = encodeURIComponent(
+      `Bonjour,\n\n` +
+      `Je souhaite vous contacter concernant votre service de facettes dentaires.\n\n` +
+      `Informations de contact:\n` +
+      `- Nom: ${formData.firstName} ${formData.lastName}\n` +
+      `- Email: ${formData.email}\n` +
+      (formData.phone ? `- Téléphone: ${formData.phone}\n` : '') +
+      `\nMessage:\n${formData.message}\n\n` +
+      `Cordialement,\n${formData.firstName} ${formData.lastName}`
+    );
+    
+    const dentistEmail = "adhhak9@gmail.com"; // Email du dentiste
+    const mailtoLink = `mailto:${dentistEmail}?subject=${subject}&body=${body}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Show success message
+    toast({
+      title: "✅ Formulaire préparé !",
+      description: "Votre client de messagerie va s'ouvrir. Veuillez envoyer l'email pour finaliser votre demande.",
+      duration: 6000,
+    });
+
+    // Reset form after a short delay
+    setTimeout(() => {
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        message: ""
+      });
+    }, 1000);
+  };
+
   const quickLinks = [
     { label: "Accueil", href: "#home" },
     { label: "À propos", href: "#about" },
-    { label: "Produits", href: "#products" },
     { label: "Galerie", href: "#gallery" },
     { label: "Témoignages", href: "#testimonials" },
     { label: "Contact", href: "#contact" }
   ];
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    
+    // Si on n'est pas sur la page d'accueil, naviguer d'abord vers "/"
+    if (location.pathname !== "/") {
+      navigate("/");
+      // Attendre que la page soit chargée avant de scroller
+      setTimeout(() => {
+        const scrollToElement = () => {
+          const element = document.querySelector(href);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            // Si l'élément n'est pas encore disponible, réessayer
+            requestAnimationFrame(scrollToElement);
+          }
+        };
+        scrollToElement();
+      }, 150);
+    } else {
+      // Si on est déjà sur la page d'accueil, scroller directement
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
   const services = [
     "Facette Classique",
@@ -41,64 +151,99 @@ const Footer = () => {
 
             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardContent className="p-8">
-                <form className="grid md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-background mb-2">
-                      Prénom
+                    <label htmlFor="firstName" className="block text-sm font-medium text-background mb-2">
+                      Prénom *
                     </label>
                     <Input 
+                      id="firstName"
+                      name="firstName"
+                      type="text"
                       placeholder="Votre prénom"
+                      required
+                      value={formData.firstName}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-background placeholder:text-background/60"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-background mb-2">
-                      Nom
+                    <label htmlFor="lastName" className="block text-sm font-medium text-background mb-2">
+                      Nom *
                     </label>
                     <Input 
+                      id="lastName"
+                      name="lastName"
+                      type="text"
                       placeholder="Votre nom"
+                      required
+                      value={formData.lastName}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-background placeholder:text-background/60"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-background mb-2">
-                      Email
+                    <label htmlFor="email" className="block text-sm font-medium text-background mb-2">
+                      Email *
                     </label>
                     <Input 
+                      id="email"
+                      name="email"
                       type="email"
                       placeholder="votre@email.com"
+                      required
+                      value={formData.email}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-background placeholder:text-background/60"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-background mb-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-background mb-2">
                       Téléphone
                     </label>
                     <Input 
-                      placeholder="Votre numéro"
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="Votre numéro (optionnel)"
+                      value={formData.phone}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-background placeholder:text-background/60"
                     />
                   </div>
                   
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-background mb-2">
-                      Message
+                    <label htmlFor="message" className="block text-sm font-medium text-background mb-2">
+                      Message *
                     </label>
                     <Textarea 
+                      id="message"
+                      name="message"
                       placeholder="Décrivez votre projet ou posez vos questions..."
                       rows={4}
+                      required
+                      value={formData.message}
+                      onChange={handleInputChange}
                       className="bg-white/10 border-white/20 text-background placeholder:text-background/60"
                     />
                   </div>
                   
                   <div className="md:col-span-2">
-                    <Button variant="secondary" size="lg" className="w-full">
-                      <Mail className="w-4 h-4 mr-2" />
-                      Envoyer le message
+                    <Button 
+                      type="submit" 
+                      variant="secondary" 
+                      size="lg" 
+                      className="w-full"
+                    >
+                      <Send className="w-5 h-5 mr-2" />
+                      Ouvrir mon email
                     </Button>
+                    <p className="text-xs text-background/60 mt-2 text-center">
+                      Le formulaire ouvrira votre client de messagerie avec le message pré-rempli
+                    </p>
                   </div>
                 </form>
               </CardContent>
@@ -184,7 +329,8 @@ const Footer = () => {
                   <li key={link.label}>
                     <a 
                       href={link.href}
-                      className="text-background/80 hover:text-background transition-colors duration-300"
+                      onClick={(e) => handleLinkClick(e, link.href)}
+                      className="text-background/80 hover:text-background transition-colors duration-300 cursor-pointer"
                     >
                       {link.label}
                     </a>
@@ -246,15 +392,17 @@ const Footer = () => {
               © 2024 Adhhak. Tous droits réservés.
             </p>
             
-            <div className="flex items-center space-x-6 text-sm text-background/60">
-              <a href="#" className="hover:text-background transition-colors">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm text-background/60">
+              <a href="/mentions-legales" className="hover:text-background transition-colors">
                 Mentions légales
               </a>
-              <a href="#" className="hover:text-background transition-colors">
+              <span className="hidden md:inline">•</span>
+              <a href="/mentions-legales#confidentialite" className="hover:text-background transition-colors">
                 Politique de confidentialité
               </a>
-              <a href="#" className="hover:text-background transition-colors">
-                CGV
+              <span className="hidden md:inline">•</span>
+              <a href="/mentions-legales#cookies" className="hover:text-background transition-colors">
+                Cookies
               </a>
             </div>
           </div>

@@ -146,3 +146,109 @@ Le rendez-vous a été automatiquement ajouté à votre calendrier Google.
   }
 }
 
+/**
+ * Send contact form email
+ */
+export async function sendContactEmail({ firstName, lastName, email, phone, message }) {
+  try {
+    const transporter = createTransporter();
+    
+    // Si pas de transporter (pas de mot de passe), on skip l'email
+    if (!transporter) {
+      console.log('ℹ️  Contact email skipped (EMAIL_PASSWORD not configured)');
+      return {
+        success: true,
+        skipped: true,
+        message: 'Contact email skipped - EMAIL_PASSWORD not configured'
+      };
+    }
+
+    const dentistEmail = process.env.DENTIST_EMAIL || process.env.EMAIL_USER || BOOKING_CONFIG.DENTIST_EMAIL;
+    const fullName = `${firstName} ${lastName}`;
+    
+    const mailOptions = {
+      from: `"${BOOKING_CONFIG.CLINIC_NAME} - Formulaire de contact" <${process.env.EMAIL_USER || dentistEmail}>`,
+      to: dentistEmail,
+      replyTo: email, // Allow replying directly to the customer
+      subject: `📧 Nouveau message de contact - ${fullName}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .info-box { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #667eea; }
+            .info-label { font-weight: bold; color: #667eea; }
+            .message-box { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #667eea; min-height: 100px; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+            .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>📧 Nouveau Message de Contact</h1>
+              <p>Un visiteur a envoyé un message depuis le site web</p>
+            </div>
+            <div class="content">
+              <div class="info-box">
+                <h2 style="margin-top: 0; color: #667eea;">Informations du Contact</h2>
+                <p><span class="info-label">Nom complet:</span> ${fullName}</p>
+                <p><span class="info-label">Email:</span> <a href="mailto:${email}">${email}</a></p>
+                ${phone ? `<p><span class="info-label">Téléphone:</span> <a href="tel:${phone}">${phone}</a></p>` : '<p><span class="info-label">Téléphone:</span> Non fourni</p>'}
+              </div>
+
+              <div class="message-box">
+                <h2 style="margin-top: 0; color: #667eea;">Message</h2>
+                <p style="white-space: pre-wrap;">${message}</p>
+              </div>
+
+              <div style="text-align: center;">
+                <a href="mailto:${email}" class="button">Répondre par email</a>
+              </div>
+
+              <div class="footer">
+                <p>Cet email a été envoyé automatiquement depuis le formulaire de contact du site ${BOOKING_CONFIG.CLINIC_NAME}.</p>
+                <p>Date: ${new Date().toLocaleString('fr-FR')}</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `
+Nouveau Message de Contact - ${BOOKING_CONFIG.CLINIC_NAME}
+
+Informations du Contact:
+- Nom complet: ${fullName}
+- Email: ${email}
+- Téléphone: ${phone || 'Non fourni'}
+
+Message:
+${message}
+
+---
+Cet email a été envoyé automatiquement depuis le formulaire de contact du site web.
+Date: ${new Date().toLocaleString('fr-FR')}
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Contact email sent successfully:', info.messageId);
+    
+    return {
+      success: true,
+      messageId: info.messageId,
+    };
+  } catch (error) {
+    console.error('Error sending contact email:', error);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+}

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Heart, Clock, Award } from "lucide-react";
-import clinicImage from "@/assets/clinic-interior.jpg";
+import adhhakImage from "@/assets/Découvrez Adhhak™ la solution innovante pour un sourire éclatant. 🤩Fabriqué dans notre laborato.jpg";
 
 const AboutSection = () => {
   const features = [
@@ -23,7 +23,7 @@ const AboutSection = () => {
     {
       icon: Award,
       title: "Fabrication locale",
-      description: "Savoir-faire maîtrisé et suivi client personnalisé en France"
+      description: "Savoir-faire maîtrisé et suivi client personnalisé en Tunisie"
     }
   ];
 
@@ -73,8 +73,8 @@ const AboutSection = () => {
             <div className="relative animate-scale-in">
               <div className="relative overflow-hidden rounded-3xl shadow-2xl">
                 <img
-                  src={clinicImage}
-                  alt="Clinique Adhhak - Environnement professionnel"
+                  src={adhhakImage}
+                  alt="Découvrez Adhhak - La solution innovante pour un sourire éclatant"
                   className="w-full h-96 lg:h-[500px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>

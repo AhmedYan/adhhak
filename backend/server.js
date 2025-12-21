@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { createCalendarEvent, initializeCalendar } from './services/calendarService.js';
-import { sendNotificationEmail } from './services/emailService.js';
+import { sendNotificationEmail, sendContactEmail } from './services/emailService.js';
 import { validateBookingData } from './utils/validation.js';
 
 dotenv.config();
@@ -126,6 +126,62 @@ app.post('/api/bookings', async (req, res) => {
 
   } catch (error) {
     console.error('Booking error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      details: error.message || 'An unexpected error occurred'
+    });
+  }
+});
+
+// Contact form endpoint
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone, message } = req.body;
+
+    // Basic validation
+    if (!firstName || !lastName || !email || !message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields',
+        details: ['firstName', 'lastName', 'email', 'message'].filter(field => !req.body[field])
+      });
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid email format'
+      });
+    }
+
+    // Send contact email
+    const emailResult = await sendContactEmail({
+      firstName,
+      lastName,
+      email,
+      phone: phone || undefined,
+      message
+    });
+
+    if (!emailResult.success) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to send contact email',
+        details: emailResult.error
+      });
+    }
+
+    // Return success response
+    res.json({
+      success: true,
+      message: 'Message envoyé avec succès. Nous vous répondrons dans les plus brefs délais.'
+    });
+
+  } catch (error) {
+    console.error('Contact form error:', error);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
