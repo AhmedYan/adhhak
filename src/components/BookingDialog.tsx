@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import { MobileCalendar } from "@/components/ui/mobile-calendar";
 import {
   Dialog,
   DialogContent,
@@ -327,15 +328,31 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
                 <CalendarIcon className="w-5 h-5" />
                 <span className="text-sm">Sélectionnez une date</span>
               </div>
-              <div className="flex justify-center">
+              
+              {/* Mobile Calendar */}
+              <div className="lg:hidden">
+                <div className="flex justify-center w-full overflow-x-auto pb-2">
+                  <MobileCalendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDateSelect}
+                    disabled={isDateDisabled}
+                    className="rounded-lg border bg-card shadow-sm min-w-[320px]"
+                  />
+                </div>
+              </div>
+
+              {/* Desktop Calendar */}
+              <div className="hidden lg:flex justify-center">
                 <Calendar
                   mode="single"
                   selected={selectedDate}
                   onSelect={handleDateSelect}
                   disabled={isDateDisabled}
-                  className="rounded-md border w-full max-w-fit"
+                  className="rounded-lg border bg-card shadow-sm"
                 />
               </div>
+
               {selectedDate && (
                 <div className="text-center p-3 bg-primary/10 rounded-lg">
                   <p className="text-sm text-muted-foreground">Date sélectionnée:</p>
