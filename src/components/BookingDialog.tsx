@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { MobileCalendar } from "@/components/ui/mobile-calendar";
+import { MobileDatePicker } from "@/components/ui/mobile-date-picker";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -142,7 +149,17 @@ const generateDentistEmail = (
 };
 
 export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
+  const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [step, setStep] = useState<"date" | "time" | "details">("date");
@@ -284,6 +301,11 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
   const canProceedToDetails = selectedDate && selectedTime;
   const canSubmit = canProceedToDetails && formData.name && formData.email && formData.phone;
 
+  // Use Sheet for mobile, Dialog for desktop
+  if (isMobile) {
+    return <MobileBookingSheet open={open} onOpenChange={handleClose} />;
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
@@ -329,10 +351,10 @@ export function BookingDialog({ open, onOpenChange }: BookingDialogProps) {
                 <span className="text-sm">Sélectionnez une date</span>
               </div>
               
-              {/* Mobile Calendar */}
+              {/* Mobile Calendar - Not needed in desktop Dialog, already handled in Sheet */}
               <div className="lg:hidden">
                 <div className="flex justify-center w-full overflow-x-auto pb-2">
-                  <MobileCalendar
+                  <MobileDatePicker
                     mode="single"
                     selected={selectedDate}
                     onSelect={handleDateSelect}
