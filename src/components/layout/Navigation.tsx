@@ -56,7 +56,7 @@ const Navigation = () => {
           </Button>
 
           {/* Logo - Centered on mobile, left on desktop */}
-          <div className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 lg:relative lg:left-0 lg:transform-none lg:flex-shrink-0">
+          <div className="lg:hidden flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 lg:relative lg:left-0 lg:transform-none lg:flex-shrink-0">
             <Logo className="h-[3rem] w-auto sm:h-20 md:h-[4rem] lg:h-[28rem] xl:h-[28rem]" />
           </div>
 

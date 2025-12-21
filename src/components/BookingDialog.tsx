@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { MobileDatePicker } from "@/components/ui/mobile-date-picker";
 import {
@@ -10,13 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +20,7 @@ import { fr } from "date-fns/locale/fr";
 import { useToast } from "@/hooks/use-toast";
 import { BOOKING_CONFIG } from "@/config/booking";
 import { createBooking } from "@/services/bookingApi";
+import { MobileBookingSheet } from "@/components/MobileBookingSheet";
 
 interface BookingDialogProps {
   open: boolean;
